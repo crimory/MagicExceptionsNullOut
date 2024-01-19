@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "_01_MagicAutoMapper": {
+      "commandName": "Project",
+      "commandLineArgs": "--port 7029",
+      "launchBrowser": false
+    }
+  }
+}

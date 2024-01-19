@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "_04_MagicCustomValidation": {
+      "commandName": "Project",
+      "commandLineArgs": "--port 7215",
+      "launchBrowser": false
+    }
+  }
+}
