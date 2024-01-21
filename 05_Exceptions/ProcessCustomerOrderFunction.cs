@@ -25,7 +25,7 @@ public class ProcessCustomerOrderFunction
         
         var customerOrder = websiteCustomerOrder.Map();
         var validationResults = customerOrder.Validate();
-        if (validationResults.Count != 0)
+        if (validationResults.Length != 0)
         {
             var errorResponse = req.CreateResponse(HttpStatusCode.BadRequest);
             foreach (var validationResult in validationResults)

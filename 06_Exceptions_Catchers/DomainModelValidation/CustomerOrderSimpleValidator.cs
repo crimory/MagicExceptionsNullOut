@@ -5,54 +5,132 @@ namespace _06_Exceptions_Catchers.DomainModelValidation;
 
 public static class CustomerOrderSimpleValidator
 {
-    public static List<ValidationResult> Validate(this CustomerOrder order)
-    {
-        var results = new List<ValidationResult>();
-        if (order.Number.Length is < 3 or > 50)
-            results.Add(new ValidationResult(
-                $"{nameof(CustomerOrder)}.{nameof(CustomerOrder.Number)} should be between 3 and 50 characters long",
-                new []{$"{nameof(CustomerOrder)}.{nameof(CustomerOrder.Number)}"}));
-        results.AddRange(order.Positions.Validate());
-        results.AddRange(order.Customer.Validate());
-        return results;
-    }
-    
-    private static List<ValidationResult> Validate(this CustomerOrderPosition[] positions)
-    {
-        throw new Exception("Did you really think that was the only example?!");
-        var results = new List<ValidationResult>();
-        if (positions.Length < 1)
-            results.Add(new ValidationResult(
-                $"{nameof(CustomerOrder)}.{nameof(CustomerOrder.Positions)} cannot be empty",
-                new []{$"{nameof(CustomerOrder)}.{nameof(CustomerOrder.Positions)}"}));
-        foreach (var position in positions)
+    private static readonly Func<CustomerOrder, ValidOrNot>[] CustomerOrderValidators =
+    [
+        o => o.Number.Length is >= 3 and <= 50
+            ? new ValidOrNot.Valid()
+            : new ValidOrNot.NonValid([
+                CreateResult($"{nameof(CustomerOrder)}.{nameof(CustomerOrder.Number)}",
+                    "should be between 3 and 50 characters long")
+            ]),
+        o => o.Positions.Validate(),
+        o => o.Customer.Validate()
+    ];
+
+    private static readonly Func<CustomerOrderPosition[], ValidOrNot>[] CustomerOrderPositionsValidators =
+    [
+        p =>
         {
-            results.AddRange(position.Validate());
+            throw new Exception("Did you really think that was the only example?!");
+            return p.Length >= 1
+                ? new ValidOrNot.Valid()
+                : new ValidOrNot.NonValid([
+                    CreateResult($"{nameof(CustomerOrder)}.{nameof(CustomerOrder.Positions)}",
+                        "cannot be empty")
+                ]);
+        },
+        p => p
+            .Select(x => x.Validate())
+            .CombineMultipleValidOrNot()
+    ];
+
+    private static readonly Func<CustomerOrderPosition, ValidOrNot>[] CustomerOrderPositionValidators =
+    [
+        p => p.ItemName.Length is >= 3 and <= 50
+            ? new ValidOrNot.Valid()
+            : new ValidOrNot.NonValid([
+                CreateResult(
+                    $"{nameof(CustomerOrder)}.{nameof(CustomerOrder.Positions)}[x].{nameof(CustomerOrderPosition.ItemName)}",
+                    "should be between 3 and 50 characters long")
+            ]),
+        p => p.Quantity is >= 5 and <= 1000
+            ? new ValidOrNot.Valid()
+            : new ValidOrNot.NonValid([
+                CreateResult(
+                    $"{nameof(CustomerOrder)}.{nameof(CustomerOrder.Positions)}[x].{nameof(CustomerOrderPosition.Quantity)}",
+                    "should be between 5 and 1000")
+            ])
+    ];
+
+    private static readonly Func<Customer, ValidOrNot>[] CustomerValidators =
+    [
+        p => p.Name.Length is >= 3 and <= 50
+            ? new ValidOrNot.Valid()
+            : new ValidOrNot.NonValid([
+                CreateResult($"{nameof(CustomerOrder)}.{nameof(CustomerOrder.Customer)}.{nameof(Customer.Name)}",
+                    "should be between 3 and 50 characters long")
+            ])
+    ];
+
+    public static ValidationResult[] Validate(this CustomerOrder order)
+    {
+        return order.ValidateInternal() switch
+        {
+            ValidOrNot.NonValid nonValid => nonValid.Results,
+            ValidOrNot.Valid => Array.Empty<ValidationResult>(),
+            _ => throw new ArgumentOutOfRangeException()
+        };
+    }
+
+    private static ValidOrNot ValidateInternal(this CustomerOrder order)
+    {
+        return CustomerOrderValidators
+            .Select(x => x(order))
+            .CombineMultipleValidOrNot();
+    }
+
+    private static ValidOrNot Validate(this CustomerOrderPosition[] positions)
+    {
+        return CustomerOrderPositionsValidators
+            .Select(x => x(positions))
+            .CombineMultipleValidOrNot();
+    }
+
+    private static ValidOrNot Validate(this CustomerOrderPosition position)
+    {
+        return CustomerOrderPositionValidators
+            .Select(x => x(position))
+            .CombineMultipleValidOrNot();
+    }
+
+    private static ValidOrNot Validate(this Customer customer)
+    {
+        return CustomerValidators
+            .Select(x => x(customer))
+            .CombineMultipleValidOrNot();
+    }
+
+    private static ValidationResult CreateResult(string memberName, string errorMessage)
+    {
+        return new ValidationResult($"{memberName} {errorMessage}", new[] { memberName });
+    }
+
+    private abstract record ValidOrNot
+    {
+        private ValidOrNot()
+        {
         }
-        return results;
+
+        internal record Valid : ValidOrNot;
+
+        internal record NonValid(ValidationResult[] Results) : ValidOrNot;
+
+        internal ValidationResult[] GetResults()
+        {
+            return this switch
+            {
+                Valid => Array.Empty<ValidationResult>(),
+                NonValid nonValid => nonValid.Results,
+                _ => throw new ArgumentOutOfRangeException()
+            };
+        }
     }
-    
-    private static List<ValidationResult> Validate(this CustomerOrderPosition position)
+
+    private static ValidOrNot CombineMultipleValidOrNot(this IEnumerable<ValidOrNot> input)
     {
-        var results = new List<ValidationResult>();
-        if (position.ItemName.Length is < 3 or > 50)
-            results.Add(new ValidationResult(
-                $"{nameof(CustomerOrder)}.{nameof(CustomerOrder.Positions)}.{nameof(CustomerOrderPosition.ItemName)} should be between 3 and 50 characters long",
-                new []{$"{nameof(CustomerOrder)}.{nameof(CustomerOrder.Positions)}[x].{nameof(CustomerOrderPosition.ItemName)}"}));
-        if (position.Quantity is < 5 or > 1000)
-            results.Add(new ValidationResult(
-                $"{nameof(CustomerOrder)}.{nameof(CustomerOrder.Positions)}.{nameof(CustomerOrderPosition.Quantity)} should be between 5 and 1000",
-                new []{$"{nameof(CustomerOrder)}.{nameof(CustomerOrder.Positions)}[x].{nameof(CustomerOrderPosition.Quantity)}"}));
-        return results;
-    }
-    
-    private static List<ValidationResult> Validate(this Customer customer)
-    {
-        var results = new List<ValidationResult>();
-        if (customer.Name.Length is < 3 or > 50)
-            results.Add(new ValidationResult(
-                $"{nameof(CustomerOrder)}.{nameof(CustomerOrder.Customer)}.{nameof(Customer.Name)} should be between 3 and 50 characters long",
-                new []{$"{nameof(CustomerOrder)}.{nameof(CustomerOrder.Customer)}.{nameof(Customer.Name)}"}));
-        return results;
+        var inputs = input as ValidOrNot[] ?? input.ToArray();
+        return inputs.All(x => x is ValidOrNot.Valid)
+            ? new ValidOrNot.Valid()
+            : new ValidOrNot.NonValid(inputs.SelectMany(x => x.GetResults()).ToArray());
     }
 }

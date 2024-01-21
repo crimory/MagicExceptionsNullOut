@@ -44,7 +44,7 @@ public class ProcessCustomerOrderFunction
             return req.CreateResponse(HttpStatusCode.BadRequest);
         }
 
-        List<ValidationResult> validationResults;
+        ValidationResult[] validationResults;
         try
         {
             validationResults = customerOrder.Validate();
@@ -54,7 +54,7 @@ public class ProcessCustomerOrderFunction
             return req.CreateResponse(HttpStatusCode.BadRequest);
         }
 
-        if (validationResults.Count != 0)
+        if (validationResults.Length != 0)
         {
             var errorResponse = req.CreateResponse(HttpStatusCode.BadRequest);
             foreach (var validationResult in validationResults)
