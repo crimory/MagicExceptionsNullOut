@@ -1,4 +1,4 @@
-namespace _04_MagicCustomValidation.DomainModel;
+namespace _06_Exceptions_Catchers.DomainModel;
 
 public record CustomerOrder(
     string Number,

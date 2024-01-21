@@ -8,6 +8,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "03_MagicValidation", "03_Ma
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "04_MagicCustomValidation", "04_MagicCustomValidation\04_MagicCustomValidation.csproj", "{C1CFC3EE-25A5-40DA-93E9-7A20F82B544A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "05_Exceptions", "05_Exceptions\05_Exceptions.csproj", "{139D7C93-BD84-4E41-8537-622AB672BD7B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "06_Exceptions_Catchers", "06_Exceptions_Catchers\06_Exceptions_Catchers.csproj", "{94126B6C-C934-4ECD-91FA-73DBCEBBB198}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,6 +34,14 @@ Global
 		{C1CFC3EE-25A5-40DA-93E9-7A20F82B544A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C1CFC3EE-25A5-40DA-93E9-7A20F82B544A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C1CFC3EE-25A5-40DA-93E9-7A20F82B544A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{139D7C93-BD84-4E41-8537-622AB672BD7B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{139D7C93-BD84-4E41-8537-622AB672BD7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{139D7C93-BD84-4E41-8537-622AB672BD7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{139D7C93-BD84-4E41-8537-622AB672BD7B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{94126B6C-C934-4ECD-91FA-73DBCEBBB198}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{94126B6C-C934-4ECD-91FA-73DBCEBBB198}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{94126B6C-C934-4ECD-91FA-73DBCEBBB198}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{94126B6C-C934-4ECD-91FA-73DBCEBBB198}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 	EndGlobalSection
