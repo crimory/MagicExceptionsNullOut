@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "_07_Railway_Oriented": {
+      "commandName": "Project",
+      "commandLineArgs": "--port 7272",
+      "launchBrowser": false
+    }
+  }
+}

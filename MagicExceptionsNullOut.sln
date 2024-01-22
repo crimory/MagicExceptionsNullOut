@@ -12,6 +12,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "05_Exceptions", "05_Excepti
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "06_Exceptions_Catchers", "06_Exceptions_Catchers\06_Exceptions_Catchers.csproj", "{94126B6C-C934-4ECD-91FA-73DBCEBBB198}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "07_Railway_Oriented", "07_Railway_Oriented\07_Railway_Oriented.csproj", "{3FE8BA79-C00C-4DC1-81C3-A092593C8686}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -42,6 +44,10 @@ Global
 		{94126B6C-C934-4ECD-91FA-73DBCEBBB198}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{94126B6C-C934-4ECD-91FA-73DBCEBBB198}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{94126B6C-C934-4ECD-91FA-73DBCEBBB198}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3FE8BA79-C00C-4DC1-81C3-A092593C8686}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3FE8BA79-C00C-4DC1-81C3-A092593C8686}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3FE8BA79-C00C-4DC1-81C3-A092593C8686}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3FE8BA79-C00C-4DC1-81C3-A092593C8686}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 	EndGlobalSection
