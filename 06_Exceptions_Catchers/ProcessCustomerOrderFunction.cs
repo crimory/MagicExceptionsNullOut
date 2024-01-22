@@ -56,9 +56,10 @@ public class ProcessCustomerOrderFunction
         return response;
     }
 
-    private static async Task<HttpResponseData> GetResponseWithJson(HttpRequestData req, string json)
+    private static async Task<HttpResponseData> GetResponseWithJson(
+        HttpRequestData req, string json, HttpStatusCode statusCode = HttpStatusCode.BadRequest)
     {
-        var errorResponse = req.CreateResponse(HttpStatusCode.BadRequest);
+        var errorResponse = req.CreateResponse(statusCode);
         await errorResponse.WriteAsJsonAsync(json);
         return errorResponse;
     }
