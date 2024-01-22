@@ -1,5 +1,4 @@
 using System.Net;
-using _07_Railway_Oriented.DomainModel;
 using Microsoft.Azure.Functions.Worker.Http;
 
 namespace _07_Railway_Oriented.Errors;
@@ -15,12 +14,12 @@ public abstract record ErrorOrOutput<T>
     internal record Error(DomainError[] DomainErrors) : ErrorOrOutput<T>;
     internal record ActualValue(T Value) : ErrorOrOutput<T>;
 
-    internal ErrorOrOutput<TK> PropagateError<TK>(Func<T, ErrorOrOutput<TK>> abc)
+    internal ErrorOrOutput<TK> PropagateError<TK>(Func<T, ErrorOrOutput<TK>> processValue)
     {
         return this switch
         {
             Error error => new ErrorOrOutput<TK>.Error(error.DomainErrors),
-            ActualValue actualValue => abc(actualValue.Value),
+            ActualValue actualValue => processValue(actualValue.Value),
             _ => throw new ArgumentOutOfRangeException()
         };
     }
@@ -28,17 +27,18 @@ public abstract record ErrorOrOutput<T>
 
 public static class RailwayUtility
 {
-    public static ErrorOrOutput<T> WrapValue<T>(T value) =>
+    public static ErrorOrOutput<T> RailwayBind<T>(T value) =>
         new ErrorOrOutput<T>.ActualValue(value);
     
-    public static ErrorOrOutput<TO> RailwayPropagate<TI, TO>(
+    public static ErrorOrOutput<TO> RailwayBind<TI, TO>(
         this ErrorOrOutput<TI> input,
         Func<TI, ErrorOrOutput<TO>> internalProcess)
     {
         return input.PropagateError(internalProcess);
     }
 
-    public static async Task<HttpResponseData> GetOkOrBadRequestResponse<T>(HttpRequestData req, ErrorOrOutput<T> errorOrOutput)
+    public static async Task<HttpResponseData> GetOkOrBadRequestResponse<T>(
+        HttpRequestData req, ErrorOrOutput<T> errorOrOutput)
     {
         return errorOrOutput switch
         {

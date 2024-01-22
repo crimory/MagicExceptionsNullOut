@@ -1,4 +1,3 @@
-using System.Net;
 using System.Text.Json;
 using _07_Railway_Oriented.DomainModel;
 using _07_Railway_Oriented.DomainModelValidation;
@@ -19,10 +18,10 @@ public static class ProcessCustomerOrderFunction
     {
         var websiteRawInput = await req.ReadAsStringAsync() ?? string.Empty;
         
-        var outputOrError = RailwayUtility.WrapValue(websiteRawInput)
-            .RailwayPropagate(DeserializeWebsiteCustomerOrder)
-            .RailwayPropagate(WrappedMapper)
-            .RailwayPropagate(CustomerOrderSimpleValidator.Validate);
+        var outputOrError = RailwayUtility.RailwayBind(websiteRawInput)
+            .RailwayBind(DeserializeWebsiteCustomerOrder)
+            .RailwayBind(WrappedMapper)
+            .RailwayBind(CustomerOrderSimpleValidator.Validate);
 
         return await RailwayUtility.GetOkOrBadRequestResponse(req, outputOrError);
     }
@@ -31,13 +30,13 @@ public static class ProcessCustomerOrderFunction
     {
         var websiteCustomerOrder = JsonSerializer.Deserialize<WebsiteCustomerOrder>(rawInput);
         return websiteCustomerOrder is not null
-            ? RailwayUtility.WrapValue(websiteCustomerOrder)
+            ? RailwayUtility.RailwayBind(websiteCustomerOrder)
             : new ErrorOrOutput<WebsiteCustomerOrder>.Error(
                 [new DomainError($"Cannot deserialize {rawInput}")]);
     }
 
     private static ErrorOrOutput<CustomerOrder> WrappedMapper(WebsiteCustomerOrder websiteOrder)
     {
-        return RailwayUtility.WrapValue(websiteOrder.Map());
+        return RailwayUtility.RailwayBind(websiteOrder.Map());
     }
 }
