@@ -1,4 +1,3 @@
-using System.ComponentModel.DataAnnotations;
 using _07_Railway_Oriented.DomainModel;
 using _07_Railway_Oriented.Errors;
 
@@ -63,10 +62,7 @@ public static class CustomerOrderSimpleValidator
     {
         return order.ValidateInternal() switch
         {
-            ValidOrNot.NonValid nonValid => new ErrorOrOutput<CustomerOrder>.Error(
-                nonValid.Results
-                    .Select(x => new DomainError(x.ToString()))
-                    .ToArray()),
+            ValidOrNot.NonValid nonValid => new ErrorOrOutput<CustomerOrder>.Error(nonValid.Results),
             ValidOrNot.Valid => new ErrorOrOutput<CustomerOrder>.ActualValue(order),
             _ => throw new ArgumentOutOfRangeException()
         };
@@ -100,9 +96,9 @@ public static class CustomerOrderSimpleValidator
             .CombineMultipleValidOrNot();
     }
 
-    private static ValidationResult CreateResult(string memberName, string errorMessage)
+    private static DomainError CreateResult(string memberName, string errorMessage)
     {
-        return new ValidationResult($"{memberName} {errorMessage}", new[] { memberName });
+        return new DomainError($"{memberName} {errorMessage}");
     }
 
     private abstract record ValidOrNot
@@ -113,13 +109,13 @@ public static class CustomerOrderSimpleValidator
 
         internal record Valid : ValidOrNot;
 
-        internal record NonValid(ValidationResult[] Results) : ValidOrNot;
+        internal record NonValid(DomainError[] Results) : ValidOrNot;
 
-        internal ValidationResult[] GetResults()
+        internal DomainError[] GetResults()
         {
             return this switch
             {
-                Valid => Array.Empty<ValidationResult>(),
+                Valid => Array.Empty<DomainError>(),
                 NonValid nonValid => nonValid.Results,
                 _ => throw new ArgumentOutOfRangeException()
             };
