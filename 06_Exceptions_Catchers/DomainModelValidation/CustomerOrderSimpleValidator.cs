@@ -3,6 +3,8 @@ using _06_Exceptions_Catchers.DomainModel;
 
 namespace _06_Exceptions_Catchers.DomainModelValidation;
 
+public class CustomValidationException(string message) : Exception(message);
+
 public static class CustomerOrderSimpleValidator
 {
     private static readonly Func<CustomerOrder, ValidOrNot>[] CustomerOrderValidators =
@@ -21,7 +23,7 @@ public static class CustomerOrderSimpleValidator
     [
         p =>
         {
-            throw new Exception("Did you really think that was the only example?!");
+            throw new CustomValidationException("Did you really think that was the only example?!");
             return p.Length >= 1
                 ? new ValidOrNot.Valid()
                 : new ValidOrNot.NonValid([

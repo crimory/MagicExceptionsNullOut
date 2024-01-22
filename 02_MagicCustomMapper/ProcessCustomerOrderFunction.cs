@@ -19,7 +19,9 @@ public static class ProcessCustomerOrderFunction
 
         if (websiteCustomerOrder is null)
         {
-            return req.CreateResponse(HttpStatusCode.BadRequest);
+            var errorResponse = req.CreateResponse(HttpStatusCode.BadRequest);
+            await errorResponse.WriteAsJsonAsync($$"""{"Error": "Cannot deserialize: {{websiteRawInput}}"}""");
+            return errorResponse;
         }
         
         var customerOrder = websiteCustomerOrder.Map();

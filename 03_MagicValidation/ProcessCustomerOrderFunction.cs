@@ -20,7 +20,9 @@ public static class ProcessCustomerOrderFunction
 
         if (websiteCustomerOrder is null)
         {
-            return req.CreateResponse(HttpStatusCode.BadRequest);
+            var errorResponse = req.CreateResponse(HttpStatusCode.BadRequest);
+            await errorResponse.WriteAsJsonAsync($$"""{"Error": "Cannot deserialize: {{websiteRawInput}}"}""");
+            return errorResponse;
         }
         
         var customerOrder = websiteCustomerOrder.Map();
@@ -28,10 +30,8 @@ public static class ProcessCustomerOrderFunction
         if (validationResults.Count != 0)
         {
             var errorResponse = req.CreateResponse(HttpStatusCode.BadRequest);
-            foreach (var validationResult in validationResults)
-            {
-                errorResponse.Headers.Add("Validation-Error", validationResult.ErrorMessage);
-            }
+            var errorMessages = validationResults.Select(x => x.ErrorMessage);
+            await errorResponse.WriteAsJsonAsync($$"""{"ValidationErrors":[{{string.Join(',', errorMessages)}}]}""");
             return errorResponse;
         }
 

@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Net;
 using System.Text.Json;
 using _06_Exceptions_Catchers.DomainModel;
@@ -8,7 +6,6 @@ using _06_Exceptions_Catchers.WebsiteMapper;
 using _06_Exceptions_Catchers.WebsiteModel;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
-using Microsoft.Extensions.Logging;
 
 namespace _06_Exceptions_Catchers;
 
@@ -20,52 +17,49 @@ public class ProcessCustomerOrderFunction
         FunctionContext executionContext)
     {
         var websiteRawInput = await req.ReadAsStringAsync() ?? string.Empty;
-        WebsiteCustomerOrder? websiteCustomerOrder;
-        try
-        {
-            websiteCustomerOrder = JsonSerializer.Deserialize<WebsiteCustomerOrder>(websiteRawInput);
-        }
-        catch (Exception)
-        {
-            return req.CreateResponse(HttpStatusCode.BadRequest);
-        }
-        if (websiteCustomerOrder is null)
-        {
-            return req.CreateResponse(HttpStatusCode.BadRequest);
-        }
-
         CustomerOrder customerOrder;
         try
         {
-            customerOrder = websiteCustomerOrder.Map();
-        }
-        catch (Exception)
-        {
-            return req.CreateResponse(HttpStatusCode.BadRequest);
-        }
-
-        ValidationResult[] validationResults;
-        try
-        {
-            validationResults = customerOrder.Validate();
-        }
-        catch (Exception)
-        {
-            return req.CreateResponse(HttpStatusCode.BadRequest);
-        }
-
-        if (validationResults.Length != 0)
-        {
-            var errorResponse = req.CreateResponse(HttpStatusCode.BadRequest);
-            foreach (var validationResult in validationResults)
+            var websiteCustomerOrder = JsonSerializer.Deserialize<WebsiteCustomerOrder>(websiteRawInput);
+            if (websiteCustomerOrder is null)
             {
-                errorResponse.Headers.Add("Validation-Error", validationResult.ErrorMessage);
+                return await GetResponseWithJson(req, $$"""{"Error": "Cannot deserialize: {{websiteRawInput}}"}""");
             }
-            return errorResponse;
+
+            customerOrder = websiteCustomerOrder.Map();
+            var validationResults = customerOrder.Validate();
+            if (validationResults.Length != 0)
+            {
+                var errorMessages = validationResults.Select(x => x.ErrorMessage);
+                return await GetResponseWithJson(req, $$"""{"ValidationErrors":[{{string.Join(',', errorMessages)}}]}""");
+            }
+        }
+        catch (JsonException e)
+        {
+            return await GetResponseWithJson(req, $$"""{"Error": "{{e.Message}}"}""");
+        }
+        catch (CustomMapperException e)
+        {
+            return await GetResponseWithJson(req, $$"""{"Error": "{{e.Message}}"}""");
+        }
+        catch (CustomValidationException e)
+        {
+            return await GetResponseWithJson(req, $$"""{"Error": "{{e.Message}}"}""");
+        }
+        catch (Exception e)
+        {
+            return await GetResponseWithJson(req, $$"""{"Error": "{{e.Message}}"}""");
         }
 
         var response = req.CreateResponse(HttpStatusCode.OK);
         await response.WriteAsJsonAsync(customerOrder);
         return response;
+    }
+
+    private static async Task<HttpResponseData> GetResponseWithJson(HttpRequestData req, string json)
+    {
+        var errorResponse = req.CreateResponse(HttpStatusCode.BadRequest);
+        await errorResponse.WriteAsJsonAsync(json);
+        return errorResponse;
     }
 }

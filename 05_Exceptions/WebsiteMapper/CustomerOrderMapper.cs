@@ -3,6 +3,8 @@ using _05_Exceptions.WebsiteModel;
 
 namespace _05_Exceptions.WebsiteMapper;
 
+public class CustomMapperException(string message) : Exception(message);
+
 public static class CustomerOrderMapper
 {
     public static CustomerOrder Map(this WebsiteCustomerOrder websiteOrder)
@@ -24,7 +26,7 @@ public static class CustomerOrderMapper
     
     private static Customer Map(this WebsiteCustomer websiteCustomer)
     {
-        throw new Exception("Exception to make your life so much easier!");
+        throw new CustomMapperException("Exception to make your life so much easier!");
         return new Customer(websiteCustomer.Name);
     }
 }
