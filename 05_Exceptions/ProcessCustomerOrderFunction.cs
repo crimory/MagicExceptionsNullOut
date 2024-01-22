@@ -21,7 +21,7 @@ public class ProcessCustomerOrderFunction
         if (websiteCustomerOrder is null)
         {
             var errorResponse = req.CreateResponse(HttpStatusCode.BadRequest);
-            await errorResponse.WriteAsJsonAsync($$"""{"Error": "Cannot deserialize: {{websiteRawInput}}"}""");
+            await errorResponse.WriteStringAsync($"Error: Cannot deserialize: {websiteRawInput}");
             return errorResponse;
         }
         
@@ -31,7 +31,7 @@ public class ProcessCustomerOrderFunction
         {
             var errorResponse = req.CreateResponse(HttpStatusCode.BadRequest);
             var errorMessages = validationResults.Select(x => x.ErrorMessage);
-            await errorResponse.WriteAsJsonAsync($$"""{"ValidationErrors":[{{string.Join(',', errorMessages)}}]}""");
+            await errorResponse.WriteStringAsync($"ValidationErrors: {string.Join(',', errorMessages)}");
             return errorResponse;
         }
 

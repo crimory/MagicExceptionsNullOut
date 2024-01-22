@@ -23,7 +23,7 @@ public class ProcessCustomerOrderFunction
             var websiteCustomerOrder = JsonSerializer.Deserialize<WebsiteCustomerOrder>(websiteRawInput);
             if (websiteCustomerOrder is null)
             {
-                return await GetResponseWithJson(req, $$"""{"Error": "Cannot deserialize: {{websiteRawInput}}"}""");
+                return await GetResponseWithJson(req, $"Error: Cannot deserialize: {websiteRawInput}");
             }
 
             customerOrder = websiteCustomerOrder.Map();
@@ -31,24 +31,24 @@ public class ProcessCustomerOrderFunction
             if (validationResults.Length != 0)
             {
                 var errorMessages = validationResults.Select(x => x.ErrorMessage);
-                return await GetResponseWithJson(req, $$"""{"ValidationErrors":[{{string.Join(',', errorMessages)}}]}""");
+                return await GetResponseWithJson(req, $"ValidationErrors: {string.Join(',', errorMessages)}");
             }
         }
         catch (JsonException e)
         {
-            return await GetResponseWithJson(req, $$"""{"Error": "{{e.Message}}"}""");
+            return await GetResponseWithJson(req, $"Error: {e.Message}");
         }
         catch (CustomMapperException e)
         {
-            return await GetResponseWithJson(req, $$"""{"Error": "{{e.Message}}"}""");
+            return await GetResponseWithJson(req, $"Error: {e.Message}");
         }
         catch (CustomValidationException e)
         {
-            return await GetResponseWithJson(req, $$"""{"Error": "{{e.Message}}"}""");
+            return await GetResponseWithJson(req, $"Error: {e.Message}");
         }
         catch (Exception e)
         {
-            return await GetResponseWithJson(req, $$"""{"Error": "{{e.Message}}"}""");
+            return await GetResponseWithJson(req, $"Error: {e.Message}");
         }
 
         var response = req.CreateResponse(HttpStatusCode.OK);
@@ -57,10 +57,10 @@ public class ProcessCustomerOrderFunction
     }
 
     private static async Task<HttpResponseData> GetResponseWithJson(
-        HttpRequestData req, string json, HttpStatusCode statusCode = HttpStatusCode.BadRequest)
+        HttpRequestData req, string text, HttpStatusCode statusCode = HttpStatusCode.BadRequest)
     {
         var errorResponse = req.CreateResponse(statusCode);
-        await errorResponse.WriteAsJsonAsync(json);
+        await errorResponse.WriteStringAsync(text);
         return errorResponse;
     }
 }
