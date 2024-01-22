@@ -18,35 +18,16 @@ public static class ProcessCustomerOrderFunction
         FunctionContext executionContext)
     {
         var websiteRawInput = await req.ReadAsStringAsync() ?? string.Empty;
+        
         var outputOrError = RailwayUtility.WrapValue(websiteRawInput)
-            .RailwayPropagate(GetWebsiteCustomerOrder)
+            .RailwayPropagate(DeserializeWebsiteCustomerOrder)
             .RailwayPropagate(WrappedMapper)
             .RailwayPropagate(CustomerOrderSimpleValidator.Validate);
 
-        return outputOrError switch
-        {
-            ErrorOrOutput<CustomerOrder>.Error error => await GetErrorResponse(error.DomainErrors),
-            ErrorOrOutput<CustomerOrder>.ActualValue actualValue => await GetOkResponse(actualValue.Value),
-            _ => throw new ArgumentOutOfRangeException()
-        };
-        
-        async Task<HttpResponseData> GetErrorResponse(DomainError[] errors)
-        {
-            var errorResponse = req.CreateResponse(HttpStatusCode.BadRequest);
-            var errorMessages = errors.Select(x => x.Message);
-            await errorResponse.WriteAsJsonAsync($$"""{"ValidationErrors":[{{string.Join(',', errorMessages)}}]}""");
-            return errorResponse;
-        }
-        
-        async Task<HttpResponseData> GetOkResponse(CustomerOrder value)
-        {
-            var okResponse = req.CreateResponse(HttpStatusCode.OK);
-            await okResponse.WriteAsJsonAsync(value);
-            return okResponse;
-        }
+        return await RailwayUtility.GetOkOrBadRequestResponse(req, outputOrError);
     }
 
-    private static ErrorOrOutput<WebsiteCustomerOrder> GetWebsiteCustomerOrder(string rawInput)
+    private static ErrorOrOutput<WebsiteCustomerOrder> DeserializeWebsiteCustomerOrder(string rawInput)
     {
         var websiteCustomerOrder = JsonSerializer.Deserialize<WebsiteCustomerOrder>(rawInput);
         return websiteCustomerOrder is not null

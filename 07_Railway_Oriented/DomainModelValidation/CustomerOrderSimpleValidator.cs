@@ -98,7 +98,7 @@ public static class CustomerOrderSimpleValidator
 
     private static DomainError CreateResult(string memberName, string errorMessage)
     {
-        return new DomainError($"{memberName} {errorMessage}");
+        return new DomainError($"Validation for {memberName}: {errorMessage}");
     }
 
     private abstract record ValidOrNot
