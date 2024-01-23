@@ -16,6 +16,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "07_Railway_Oriented", "07_R
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "08_Null_Everywhere", "08_Null_Everywhere\08_Null_Everywhere.csproj", "{F5ACE83D-4F4B-464E-B7E5-7D9E47D402F7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "09_Out_Hidden_Output", "09_Out_Hidden_Output\09_Out_Hidden_Output.csproj", "{D0669903-DC46-4FC0-9C1C-7BA31EA61FFA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -54,6 +56,10 @@ Global
 		{F5ACE83D-4F4B-464E-B7E5-7D9E47D402F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F5ACE83D-4F4B-464E-B7E5-7D9E47D402F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F5ACE83D-4F4B-464E-B7E5-7D9E47D402F7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D0669903-DC46-4FC0-9C1C-7BA31EA61FFA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D0669903-DC46-4FC0-9C1C-7BA31EA61FFA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D0669903-DC46-4FC0-9C1C-7BA31EA61FFA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D0669903-DC46-4FC0-9C1C-7BA31EA61FFA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 	EndGlobalSection
