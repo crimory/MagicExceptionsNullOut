@@ -60,12 +60,11 @@ public static class CustomerOrderSimpleValidator
 
     public static ErrorOrOutput<CustomerOrder> Validate(CustomerOrder order)
     {
-        return order.ValidateInternal() switch
-        {
-            ValidOrNot.NonValid nonValid => new ErrorOrOutput<CustomerOrder>.Error(nonValid.Results),
-            ValidOrNot.Valid => new ErrorOrOutput<CustomerOrder>.ActualValue(order),
-            _ => throw new ArgumentOutOfRangeException()
-        };
+        return order
+            .ValidateInternal()
+            .Match<ErrorOrOutput<CustomerOrder>>(
+                () => new ErrorOrOutput<CustomerOrder>.ActualValue(order),
+                results => new ErrorOrOutput<CustomerOrder>.Error(results));
     }
 
     private static ValidOrNot ValidateInternal(this CustomerOrder order)
@@ -110,15 +109,22 @@ public static class CustomerOrderSimpleValidator
         internal record Valid : ValidOrNot;
 
         internal record NonValid(DomainError[] Results) : ValidOrNot;
-
-        internal DomainError[] GetResults()
+        
+        internal TOutput Match<TOutput>(Func<TOutput> processValid, Func<DomainError[], TOutput> processNonValid)
         {
             return this switch
             {
-                Valid => Array.Empty<DomainError>(),
-                NonValid nonValid => nonValid.Results,
+                NonValid nonValid => processNonValid(nonValid.Results),
+                Valid => processValid(),
                 _ => throw new ArgumentOutOfRangeException()
             };
+        }
+
+        internal DomainError[] GetResults()
+        {
+            return Match(
+                Array.Empty<DomainError>,
+                nonValid => nonValid);
         }
     }
 

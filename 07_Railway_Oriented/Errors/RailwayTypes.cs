@@ -14,14 +14,21 @@ public abstract record ErrorOrOutput<T>
     internal record Error(DomainError[] DomainErrors) : ErrorOrOutput<T>;
     internal record ActualValue(T Value) : ErrorOrOutput<T>;
 
-    internal ErrorOrOutput<TK> PropagateError<TK>(Func<T, ErrorOrOutput<TK>> processValue)
+    internal TOutput Match<TOutput>(Func<T, TOutput> processActualValue, Func<DomainError[], TOutput> processErrors)
     {
         return this switch
         {
-            Error error => new ErrorOrOutput<TK>.Error(error.DomainErrors),
-            ActualValue actualValue => processValue(actualValue.Value),
+            Error error => processErrors(error.DomainErrors),
+            ActualValue actualValue => processActualValue(actualValue.Value),
             _ => throw new ArgumentOutOfRangeException()
         };
+    }
+
+    internal ErrorOrOutput<TK> PropagateError<TK>(Func<T, ErrorOrOutput<TK>> processValue)
+    {
+        return Match(
+            processValue,
+            errors => new ErrorOrOutput<TK>.Error(errors));
     }
 }
 
@@ -40,12 +47,9 @@ public static class RailwayUtility
     public static async Task<HttpResponseData> GetOkOrBadRequestResponse<T>(
         HttpRequestData req, ErrorOrOutput<T> errorOrOutput)
     {
-        return errorOrOutput switch
-        {
-            ErrorOrOutput<T>.Error error => await GetErrorResponse(error.DomainErrors),
-            ErrorOrOutput<T>.ActualValue actualValue => await GetOkResponse(actualValue.Value),
-            _ => throw new ArgumentOutOfRangeException()
-        };
+        return await errorOrOutput.Match(
+            GetOkResponse,
+            GetErrorResponse);
         
         async Task<HttpResponseData> GetErrorResponse(DomainError[] errors)
         {
