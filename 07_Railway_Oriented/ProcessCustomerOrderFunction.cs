@@ -28,7 +28,17 @@ public static class ProcessCustomerOrderFunction
 
     private static ErrorOrOutput<WebsiteCustomerOrder> DeserializeWebsiteCustomerOrder(string rawInput)
     {
-        var websiteCustomerOrder = JsonSerializer.Deserialize<WebsiteCustomerOrder>(rawInput);
+        WebsiteCustomerOrder? websiteCustomerOrder;
+        try
+        {
+            websiteCustomerOrder = JsonSerializer.Deserialize<WebsiteCustomerOrder>(rawInput);
+        }
+        catch (Exception e)
+        {
+            return new ErrorOrOutput<WebsiteCustomerOrder>.Error(
+                [new DomainError($"Exception during deserialization: {e.Message}")]);
+        }
+
         return websiteCustomerOrder is not null
             ? RailwayUtility.RailwayBind(websiteCustomerOrder)
             : new ErrorOrOutput<WebsiteCustomerOrder>.Error(
