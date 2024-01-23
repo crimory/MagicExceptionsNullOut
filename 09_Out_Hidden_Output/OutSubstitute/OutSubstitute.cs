@@ -18,24 +18,37 @@ public abstract record DomainOption<T>
             _ => throw new ArgumentOutOfRangeException()
         };
     }
+    
+    internal void Match(Action<T> processSome, Action processNone)
+    {
+        switch (this)
+        {
+            case None:
+                processNone();
+                break;
+            case Some some:
+                processSome(some.Value);
+                break;
+        }
+    }
 }
 
 public static class OutSubstitute
 {
-    public static bool ClassicTryParse(this string input, out uint output)
+    private static bool ClassicTryParse(this string input, out uint output)
     {
         var tryParseResult = uint.TryParse(input, out var tryParseOutput);
         output = tryParseOutput;
         return tryParseResult;
     }
-    
-    public static (bool, uint) TupleTryParse(this string input)
+
+    private static (bool, uint) TupleTryParse(this string input)
     {
         var tryParseResult = uint.TryParse(input, out var tryParseOutput);
         return (tryParseResult, tryParseOutput);
     }
-    
-    public static (bool success, uint value) NamedTupleTryParse(this string input)
+
+    private static (bool success, uint value) NamedTupleTryParse(this string input)
     {
         var tryParseResult = uint.TryParse(input, out var tryParseOutput);
         return (success: tryParseResult, value: tryParseOutput);
@@ -47,5 +60,32 @@ public static class OutSubstitute
         return tryParseResult
             ? new DomainOption<uint>.Some(tryParseOutput)
             : new DomainOption<uint>.None();
+    }
+
+    private static void UsageExamples()
+    {
+        const string input = "123";
+        
+        // Classic TryParse
+        Console.WriteLine(input.ClassicTryParse(out var output)
+            ? $"Classic TryParse: Success! Output: {output}"
+            : "Classic TryParse: Failed!");
+        
+        // Tuple TryParse
+        var (success, value) = input.TupleTryParse();
+        Console.WriteLine(success
+            ? $"Tuple TryParse: Success! Output: {value}"
+            : "Tuple TryParse: Failed!");
+        
+        // Named Tuple TryParse
+        var result = input.NamedTupleTryParse();
+        Console.WriteLine(result.success
+            ? $"Named Tuple TryParse: Success! Output: {result.value}"
+            : "Named Tuple TryParse: Failed!");
+        
+        // Discriminated Union TryParse
+        input.DiscriminatedUnionTryParse().Match(
+            someValue => Console.WriteLine($"Discriminated Union TryParse: Success! Output: {someValue}"),
+            () => Console.WriteLine("Discriminated Union TryParse: Failed!"));
     }
 }

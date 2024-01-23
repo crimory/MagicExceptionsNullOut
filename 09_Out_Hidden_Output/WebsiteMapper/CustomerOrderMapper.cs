@@ -19,7 +19,9 @@ public static class CustomerOrderMapper
     {
         return new CustomerOrderPosition(
             websitePosition.ItemName ?? string.Empty,
-            uint.TryParse(websitePosition.Quantity, out var quantity) ? quantity : 0);
+            OutSubstitute.OutSubstitute
+                .DiscriminatedUnionTryParse(websitePosition.Quantity ?? string.Empty)
+                .Match<uint>(some => some, () => 0));
     }
     
     private static Customer Map(this WebsiteCustomer websiteCustomer)
