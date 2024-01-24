@@ -18,7 +18,7 @@ public static class ProcessCustomerOrderFunction
     {
         var websiteRawInput = await req.ReadAsStringAsync() ?? string.Empty;
         
-        var outputOrError = RailwayUtility.RailwayBind(websiteRawInput)
+        var outputOrError = RailwayUtility.RailwayInitialBind(websiteRawInput)
             .RailwayBind(DeserializeWebsiteCustomerOrder)
             .RailwayBind(WrappedMapper)
             .RailwayBind(CustomerOrderSimpleValidator.Validate);
@@ -40,13 +40,13 @@ public static class ProcessCustomerOrderFunction
         }
 
         return websiteCustomerOrder is not null
-            ? RailwayUtility.RailwayBind(websiteCustomerOrder)
+            ? RailwayUtility.RailwayInitialBind(websiteCustomerOrder)
             : new ErrorOrOutput<WebsiteCustomerOrder>.Error(
                 [new DomainError($"Cannot deserialize {rawInput}")]);
     }
 
     private static ErrorOrOutput<CustomerOrder> WrappedMapper(WebsiteCustomerOrder websiteOrder)
     {
-        return RailwayUtility.RailwayBind(websiteOrder.Map());
+        return RailwayUtility.RailwayInitialBind(websiteOrder.Map());
     }
 }
