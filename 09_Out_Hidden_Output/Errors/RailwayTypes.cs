@@ -23,13 +23,6 @@ public abstract record ErrorOrOutput<T>
             _ => throw new ArgumentOutOfRangeException()
         };
     }
-
-    internal ErrorOrOutput<TK> PropagateError<TK>(Func<T, ErrorOrOutput<TK>> processValue)
-    {
-        return Match(
-            processValue,
-            errors => new ErrorOrOutput<TK>.Error(errors));
-    }
 }
 
 public static class RailwayUtility
@@ -41,7 +34,9 @@ public static class RailwayUtility
         this ErrorOrOutput<TI> input,
         Func<TI, ErrorOrOutput<TO>> internalProcess)
     {
-        return input.PropagateError(internalProcess);
+        return input.Match(
+            internalProcess,
+            errors => new ErrorOrOutput<TO>.Error(errors));
     }
 
     public static async Task<HttpResponseData> GetOkOrBadRequestResponse<T>(
