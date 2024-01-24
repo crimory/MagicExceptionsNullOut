@@ -18,6 +18,7 @@ public static class ProcessCustomerOrderFunction
     {
         var websiteRawInput = await req.ReadAsStringAsync() ?? string.Empty;
         
+        // WebsiteModel was adjusted, present 07 first
         var outputOrError = RailwayUtility.RailwayBind(websiteRawInput)
             .RailwayBind(DeserializeWebsiteCustomerOrder)
             .RailwayBind(WrappedMapper)
