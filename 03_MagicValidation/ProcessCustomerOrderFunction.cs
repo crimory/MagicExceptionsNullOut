@@ -26,7 +26,7 @@ public static class ProcessCustomerOrderFunction
         }
         
         var customerOrder = websiteCustomerOrder.Map();
-        var validationResults = customerOrder.FixedValidate();
+        var validationResults = customerOrder.Validate();
         if (validationResults.Count != 0)
         {
             var errorResponse = req.CreateResponse(HttpStatusCode.BadRequest);
