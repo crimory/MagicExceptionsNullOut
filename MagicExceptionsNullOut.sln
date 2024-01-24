@@ -18,6 +18,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "08_Null_Everywhere", "08_Nu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "09_Out_Hidden_Output", "09_Out_Hidden_Output\09_Out_Hidden_Output.csproj", "{D0669903-DC46-4FC0-9C1C-7BA31EA61FFA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "10_Impurity", "10_Impurity\10_Impurity.csproj", "{981A191B-F10A-4300-A111-A50950AE7404}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -60,6 +62,10 @@ Global
 		{D0669903-DC46-4FC0-9C1C-7BA31EA61FFA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D0669903-DC46-4FC0-9C1C-7BA31EA61FFA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D0669903-DC46-4FC0-9C1C-7BA31EA61FFA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{981A191B-F10A-4300-A111-A50950AE7404}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{981A191B-F10A-4300-A111-A50950AE7404}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{981A191B-F10A-4300-A111-A50950AE7404}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{981A191B-F10A-4300-A111-A50950AE7404}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 	EndGlobalSection
