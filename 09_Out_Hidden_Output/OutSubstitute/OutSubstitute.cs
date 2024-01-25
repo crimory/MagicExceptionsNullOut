@@ -18,19 +18,6 @@ public abstract record DomainOption<T>
             _ => throw new ArgumentOutOfRangeException()
         };
     }
-    
-    internal void Match(Action<T> processSome, Action processNone)
-    {
-        switch (this)
-        {
-            case None:
-                processNone();
-                break;
-            case Some some:
-                processSome(some.Value);
-                break;
-        }
-    }
 }
 
 public static class OutSubstitute
@@ -84,8 +71,8 @@ public static class OutSubstitute
             : "Named Tuple TryParse: Failed!");
         
         // Discriminated Union TryParse
-        input.DiscriminatedUnionTryParse().Match(
-            someValue => Console.WriteLine($"Discriminated Union TryParse: Success! Output: {someValue}"),
-            () => Console.WriteLine("Discriminated Union TryParse: Failed!"));
+        Console.WriteLine(input.DiscriminatedUnionTryParse().Match(
+            someValue => $"Discriminated Union TryParse: Success! Output: {someValue}",
+            () => "Discriminated Union TryParse: Failed!"));
     }
 }
