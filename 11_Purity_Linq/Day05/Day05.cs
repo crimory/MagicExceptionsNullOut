@@ -66,7 +66,6 @@ public static class Common
     {
         var (seeds, mappings) = ReadInput(input, readSeeds);
         return seeds
-            .AsParallel()
             .SelectMany(GetActualSeed)
             .Select(x => GetLowestLastCategory(x, mappings))
             .Min();
