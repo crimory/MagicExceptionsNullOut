@@ -15,29 +15,6 @@ public static class DataAnnotationsValidator
         var context = new ValidationContext(obj, serviceProvider: null, items: null);
 
         _ = Validator.TryValidateObject(obj, context, results, true);
-
-        return results;
-    }
-
-
-
-
-
-
-
-
-
-
-    public static List<ValidationResult> FixedValidate<T>(this T obj)
-    {
-        if (obj == null)
-        {
-            return [];
-        }
-        var results = new List<ValidationResult>();
-        var context = new ValidationContext(obj, serviceProvider: null, items: null);
-
-        _ = Validator.TryValidateObject(obj, context, results, true);
         
         foreach (var prop in obj.GetType().GetProperties()
                      .Where(p => p.CanRead && p.GetIndexParameters().Length == 0))
@@ -53,12 +30,12 @@ public static class DataAnnotationsValidator
                     {
                         if (child == null)
                             continue;
-                        results.AddRange(FixedValidate(child));
+                        results.AddRange(Validate(child));
                     }
                     break;
                 }
                 default:
-                    results.AddRange(FixedValidate(value));
+                    results.AddRange(Validate(value));
                     break;
             }
         }
