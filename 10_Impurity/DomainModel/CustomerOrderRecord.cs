@@ -34,6 +34,8 @@ public static class RecordLogUsage
             order =>
             {
                 // order.Customer.Name = "Captain Pollution was here!";
+                order.Positions
+                    .SetValue(new CustomerOrderPositionRec("test", 123), 0);
                 return true;
             },
             _ => true);
