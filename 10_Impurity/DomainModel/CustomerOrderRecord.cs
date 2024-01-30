@@ -24,7 +24,7 @@ public static class RecordLogUsage
                 new CustomerOrderPositionRec("Item 2", 3)
             ],
             new CustomerRec("John Doe"));
-        var orderOrError = RailwayUtility.RailwayBind(order);
+        var orderOrError = new ErrorOrOutput<CustomerOrderRec>.ActualValue(order);
         LogInfo(orderOrError);
     }
     

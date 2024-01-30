@@ -27,9 +27,6 @@ public abstract record ErrorOrOutput<T>
 
 public static class RailwayUtility
 {
-    public static ErrorOrOutput<T> RailwayBind<T>(T value) =>
-        new ErrorOrOutput<T>.ActualValue(value);
-    
     public static ErrorOrOutput<TO> RailwayBind<TI, TO>(
         this ErrorOrOutput<TI> input,
         Func<TI, ErrorOrOutput<TO>> internalProcess)
