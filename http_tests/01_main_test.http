@@ -1,0 +1,20 @@
+POST {{address}}/api/ProcessCustomerOrder
+Content-Type: application/json
+
+{
+  "Number": "1234567",
+  "Positions": [
+    {
+      "ItemName": "toothbrush",
+      "Quantity": "2"
+    },
+    {
+      "ItemName": "toothpaste",
+      "Quantity": "1"
+    }
+  ],
+  "Customer": {
+    "Name": "Marcin"
+  }
+}
+
